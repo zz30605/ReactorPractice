@@ -26,12 +26,12 @@ public class UserService {
 	 * 这时找到以保存的user记录用传入的user更新它。
 	 */
 	public Mono<User> save(User user) {
-		return userRepository.save(user).onErrorResume(e ->     // 1
-				                                               userRepository.findByUsername(user.getUsername())   // 2
-				                                                             .flatMap(originalUser -> {      // 4
-					                                                             user.setId(originalUser.getId());
-					                                                             return userRepository.save(user);   // 3
-				                                                             }));
+		return userRepository.save(user)
+		                     .onErrorResume(e -> userRepository.findByUsername(user.getUsername())   // 2
+		                                                       .flatMap(originalUser -> {      // 4
+			                                                       user.setId(originalUser.getId());
+			                                                       return userRepository.save(user);   // 3
+		                                                       }));
 	}
 
 	public Mono<Long> deleteByUsername(String username) {
