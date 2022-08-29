@@ -1,11 +1,16 @@
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Subscription;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.BaseSubscriber;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.core.publisher.SignalType;
 import reactor.test.StepVerifier;
+import reactorpractice.entity.User;
 
+import javax.swing.*;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Random;
@@ -107,5 +112,26 @@ public class ReactorTest {
 				    request(1); // 9
 			    }
 		    });
+	}
+	@Test
+	public void webClientTest1() throws InterruptedException {
+		WebClient webClient = WebClient.create("http://localhost:8080");   // 1
+		Mono<String> resp = webClient
+				.get().uri("/hello") // 2
+				.retrieve() // 3
+				.bodyToMono(String.class);  // 4
+		resp.subscribe(System.out::println);    // 5
+		TimeUnit.SECONDS.sleep(10);  // 6
+	}
+	@Test
+	public void webClientTest2() throws InterruptedException {
+		WebClient webClient = WebClient.builder().baseUrl("http://localhost:8080").build(); // 1
+		webClient
+				.get().uri("/user")
+				.accept(MediaType.APPLICATION_STREAM_JSON) // 2
+				.exchange() // 3
+				.flatMapMany(response -> response.bodyToFlux(User.class))   // 4
+				.doOnNext(System.out::println)  // 5
+				.blockLast();   // 6
 	}
 }

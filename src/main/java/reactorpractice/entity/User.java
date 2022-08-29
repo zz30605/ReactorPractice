@@ -1,5 +1,6 @@
 package reactorpractice.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.Date;
 @Document
 public class User {
 	@Id
+	@JsonIgnore
 	private String id;      // 注解属性id为ID
 	@Indexed(unique = true)       // 注解属性username为索引，并且不能重复
 	private String username;
